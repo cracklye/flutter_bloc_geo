@@ -1,0 +1,23 @@
+name: flutter_bloc_geo
+description: A new Flutter package project.
+version: 1.0.0
+author: Chris Racklyeft
+homepage: 
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  geolocator: ^9.0.0
+  bloc: ^8.0.1
+  flutter_bloc: ^8.0.0 
+  equatable: ^2.0.3
+
+dev_dependencies:
+  test: ^1.19.5
+  bloc_test: ^9.0.1 
+
+flutter:
+
