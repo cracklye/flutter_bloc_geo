@@ -16,6 +16,9 @@ part 'events/geo_event_start.dart';
 part 'events/geo_event_stop.dart';
 part 'events/geo_event_update.dart';
 part 'events/geo_event.dart';
+part 'events/geo_event_setlocation.dart';
+
+
 
 part 'states/geo_state_error.dart';
 part 'states/geo_state_initial.dart';

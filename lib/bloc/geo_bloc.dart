@@ -10,6 +10,7 @@ class GeoBloc extends Bloc<GeoEvent, GeoState> {
     on<GeoEventStop>(_onStop);
     on<GeoEventRequest>(_onRequest);
     on<GeoEventUpdate>(_onUpdate);
+    on<GeoEventSetLocation>(_onGeoEventSetLocation);
   }
 
   GeoState get initialState => GeoStateInitial();
@@ -18,6 +19,17 @@ class GeoBloc extends Bloc<GeoEvent, GeoState> {
   void onTransition(Transition<GeoEvent, GeoState> transition) {
     print(transition);
     super.onTransition(transition);
+  }
+
+  void _onGeoEventSetLocation(
+      GeoEventSetLocation event, Emitter<GeoState> emit) async {
+    print("GeoBloc._onGeoEventSetLocation: GeoEventRequest $event");
+    try {
+      emit(GeoStateUpdate(
+          GeoPosition(latitude: event.lat, longitude: event.lng)));
+    } catch (error) {
+      print("GeoBloc._onGeoEventSetLocation: Error occurred $error");
+    }
   }
 
   void _onUpdate(GeoEventUpdate event, Emitter<GeoState> emit) async {
@@ -33,6 +45,7 @@ class GeoBloc extends Bloc<GeoEvent, GeoState> {
     print("GeoBloc._onRequest: GeoEventRequest $event");
 
     emit(GeoStateLoading());
+    
 
     try {
       if (positionStream != null) {
@@ -68,15 +81,13 @@ class GeoBloc extends Bloc<GeoEvent, GeoState> {
       print("GeoBloc._onStart: About to get permissions");
       if (await _onHandlePermission(emit)) {
         print("GeoBloc._onStart: Handling permissions response");
-        positionStream = geolocator
-            .getPositionStream()
-            .listen((GeoPosition position) =>
+        positionStream = geolocator.getPositionStream().listen(
+            (GeoPosition position) =>
                 add(GeoEventUpdate.fromPosition(position)))
-            ..onError((error) {
+          ..onError((error) {
             print("_onRequest Error :$error");
-           // emit(GeoStateError(error.toString()));
-        });
-        
+            // emit(GeoStateError(error.toString()));
+          });
       }
     } catch (error) {
       print("GeoBloc_onStart Error :$error");
@@ -91,11 +102,9 @@ class GeoBloc extends Bloc<GeoEvent, GeoState> {
       emit(
           GeoStateError("Geolocation permissions are disabled on this device"));
     } else if (permission == GeolocatorPermission.DeniedForever) {
-      emit(
-          GeoStateError("Geolocation permissions are denied forever"));
+      emit(GeoStateError("Geolocation permissions are denied forever"));
     } else if (permission == GeolocatorPermission.Denied) {
-      emit(
-          GeoStateError("Geolocation permissions are denied"));
+      emit(GeoStateError("Geolocation permissions are denied"));
     } else {
       return true;
     }
